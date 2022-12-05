@@ -1,0 +1,154 @@
+---
+title: "penguins_assignment"
+candidate ID: '1053835'
+date: "2022-12-04"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 4: Run a statistical test on the Palmer Penguins dataset and produce a figure to explain it.
+```{r Question 4 Cleaning data, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+#Setting working directory
+setwd("~/PenguinProjectAssignment")
+
+#Loading packages using libraries function
+source("functions/libraries.R")
+
+#Loading the raw data
+penguins_raw <- read.csv("data_raw/penguins_raw.csv")
+
+#Looking at the raw data
+head(penguins_raw)
+
+#Sourcing cleaning function to clean the raw data
+source("functions/cleaning.R")
+
+#Cleaning the raw data
+penguins_clean <- cleaning(penguins_raw)
+
+#Looking at the clean data
+head(penguins_clean)
+
+#Saving the clean data
+write.csv(penguins_clean, "data_clean/penguins_clean_2.csv")
+
+#Reading in the clean data
+penguins_now_clean <- read.csv("data_clean/penguins_clean_2.csv")
+
+#Sourcing function for removing NAs from flipper length column
+source("functions/remove_NAs_from_flipper_length.R")
+
+#Removing NAs from flipper length column
+penguins_flipper_vs_body_mass <- remove_NAs_from_flipper_length(penguins_now_clean)
+
+#Viewing new data frame
+head(penguins_flipper_vs_body_mass)
+```
+
+```{r Question 4 Fitting linear model, echo = FALSE}
+#Fitting a linear model to analyse the relationship between body mass and flipper length
+LinearModel <- lm(flipper_length_mm ~ body_mass_g, penguins_flipper_vs_body_mass)
+
+#Carrying out an ANOVA test on the linear model
+anova(LinearModel)
+```
+
+```{r Question 4 Plotting figure, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+#Sourcing function for making a plot of the linear model
+source("functions/plot_flipper_vs_body_mass_figure.R")
+
+#Plotting figure
+LinearModelplot <- plot_flipper_vs_body_mass_figure(penguins_flipper_vs_body_mass)
+
+#Viewing figure
+LinearModelplot
+
+#Sourcing function for saving figure
+source("functions/save_plot_svg.R")
+
+#Saving figure
+save_plot_svg(penguins_flipper_vs_body_mass, 
+                      "figures/fig01_vector.svg", 
+                      size = 14, scaling = 0.93)
+```
+
+## Functions
+libraries
+```{r Libraries, eval = FALSE}
+library(palmerpenguins)
+library(ggplot2)
+library(tidyr)
+library(svglite)
+library(ragg)
+suppressPackageStartupMessages(library(janitor))
+suppressPackageStartupMessages(library(dplyr)) 
+```
+
+cleaning
+```{r Cleaning, eval = FALSE}
+cleaning <- function(data_raw){
+  data_raw %>%
+    clean_names() %>%
+    remove_empty(c("rows", "cols")) %>%
+    select(-starts_with("delta")) %>%
+    select(-comments) %>%
+  rename(bill_length_mm = culmen_length_mm, bill_depth_mm = culmen_depth_mm)
+}
+```
+
+remove_NAs_from_flipper_length
+```{r Remove NAs from flipper length, eval = FALSE}
+remove_NAs_from_flipper_length <- function(data_clean){
+  data_clean %>%
+    filter(!is.na(flipper_length_mm)) %>%
+    select(species, flipper_length_mm, body_mass_g)
+}
+```
+
+plot_flipper_vs_body_mass_figure
+```{r Plot flipper length vs body mass figure, eval = FALSE}
+plot_flipper_vs_body_mass_figure <- function(penguins_flipper_vs_body_mass){
+  penguins_flipper_vs_body_mass %>% 
+    ggplot(aes(x = body_mass_g, y = flipper_length_mm)) +
+    geom_point(aes(color = species), width = 0.3, show.legend = TRUE) +
+    scale_color_manual('Penguin Species', values = c("#E69F00","#56B4E9","#009E73")) +
+    geom_smooth(method = "lm", col = "#000000") +
+    labs(x = "Body mass (g)", y = "Flipper length (mm)") +
+    ggtitle("Relationship between Body Mass and Flipper Length") +
+    theme_bw()
+}
+```
+
+make_scatter_plot
+```{r Make scatter plot, eval = FALSE}
+make_scatter_plot <- function(penguins_now_clean){
+  penguins_now_clean %>% 
+    ggplot(aes(x = body_mass_g, y = flipper_length_mm)) +
+    geom_point(aes(color = species), width = 0.7, show.legend = TRUE) +
+    scale_color_manual(values = c("darkgreen","green","cyan4")) +
+    labs(x = "Body Mass",
+         y = "Flipper Length") +
+    xlim(1000,7000) +
+    ylim(100,300)
+}
+```
+
+save_plot_svg
+```{r Save plot as svg file, eval = FALSE}
+save_plot_svg <- function(penguins_flipper_vs_body_mass, 
+                          filename, size, scaling){
+  size_inches = size/2.54
+  svglite(filename, width   = size_inches, 
+          height  = size_inches, 
+          scaling = scaling)
+  penguins_flipper_vs_body_mass <- plot_flipper_vs_body_mass_figure(penguins_flipper_vs_body_mass)
+  print(penguins_flipper_vs_body_mass)
+  dev.off()
+}
+```
+
