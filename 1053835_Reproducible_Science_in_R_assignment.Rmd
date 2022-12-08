@@ -1,0 +1,289 @@
+---
+title: "1053835 'Reproducible Science in R and making Figures' assignment"
+candidate ID: '1053835'
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1: What is the reproducibility crisis in science and why should we care? (300-500 words).
+
+The reproducibility crisis refers to a growing problem in the scientific community wherein scientists are struggling to regenerate the results of an original study using exactly the same data and methods as that study. Some data suggesting that there is a reproducibility crisis comes from the results of a survey by Nature in 2016 (Baker, 2016). Of the 1,576 scientists who responded to the survey, more than 70% said that they had been unable to reproduce an experiment by another researcher. Furthermore, 52% of the researchers thought that there was a significant crisis in reproducibility.  These results suggest that most scientists acknowledge that there is a problem with the reproducibility of published research. But why is reproducibility sought after in the first place? 
+
+The purpose of testing the reproducibility of an experiment is to show that the results obtained by a study aren’t an artefact of the unique lab set-up and conditions used by that study. If the same results can be reproduced in a different environment but using the same data and methods, then this helps to rule out the influence of the experimental conditions on the results. Testing for reproducibility therefore helps to improve confidence in the results of a study, as well as the data and methods used to produce these results. 
+
+Ensuring that research is reproducible is not only beneficial to the credibility of research findings, but also makes logical sense if researchers wish to be pragmatic. This is because scientists often find that they must repeat their studies, for instance, if they found surprising or unexpected results the first time around. They may also need to regenerate their results for further analysis. Having a clear outline of the experimental procedure makes it much easier for researchers to repeat their studies. Furthermore, some journals and editors now require researchers to provide supplementary details for their methods, such as any code used in their analyses, in order for their paper to be published. If a researcher has been meticulous about outlining the methods used to generate their research outputs, then they will find it much easier to get their paper published.
+
+A final reason why scientists should care about the reproducibility of their studies is because being clear about the data and methods used for an experiment helps to contribute to “open research” (McKiernan et al., 2016). Open research involves making data publicly available, being transparent about methods and sources used, and using appropriate licenses to outline clearly how the work should be reused. Striving to make science more open is beneficial to both researchers and the public. It means that ordinary people can check the reliability and validity of experimental results for themselves by reviewing the approach taken by a study’s authors. Additionally, open research facilitates collaboration between researchers by making their work more visible in the scientific community. This means that researchers with similar interests will be more likely to reach out to one another, potentially leading to successful research partnerships being formed.
+
+\newpage
+
+## Question 2: Create a figure using the *Palmer Penguin* dataset that is correct but badly communicates the data. Focus on visual elements rather than writing misleading text on it. Provide the figure and explain your choices (100-200 words).
+
+NB: Bad figure can be seen either by running the code below or by looking in the 'figures' folder in my Github repository: https://github.com/1352775/penguins  
+
+```{r Question 2, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+#Setting working directory
+setwd("~/PenguinProjectAssignment")
+
+#Loading packages using libraries function
+source("functions/libraries.R")
+
+#Loading the raw data
+penguins_raw <- read.csv("data_raw/penguins_raw.csv")
+
+#Looking at the raw data
+head(penguins_raw)
+
+#Sourcing cleaning function to clean the raw data
+source("functions/cleaning.R")
+
+#Cleaning the raw data
+penguins_clean <- cleaning(penguins_raw)
+
+#Looking at the clean data
+head(penguins_clean)
+
+#Saving the clean data
+write.csv(penguins_clean, "data_clean/penguins_clean_1.csv")
+
+#Sourcing function for removing NAs from flipper length column
+source("functions/remove_NAs_from_flipper_length.R")
+
+#Removing NAs from flipper length column
+penguins_scatter_plot <- remove_NAs_from_flipper_length(penguins_clean)
+
+#Viewing new data frame
+head(penguins_scatter_plot)
+
+#Sourcing function for making scatter plot
+source("functions/make_scatter_plot.r")
+
+#Creating figure called 'scatter_plot'
+scatter_plot <- make_scatter_plot(penguins_scatter_plot)
+
+#Viewing figure
+scatter_plot
+
+#Saving figure
+svglite("figures/bad_figure.svg", 
+        width = 5.9, height = 5.9)
+scatter_plot
+dev.off()
+```
+
+One of the reasons why this figure badly communicates the data is that the axes are not an appropriate scale; the data points are clustered closely together and only occupy a small portion of the space in the scatter plot. Moreover, the grid lines are quite spaced apart. This makes it difficult to determine what the body mass and flipper lengths are for each observation. Additionally, similar colours have been used to represent the data points. This could lead to confusion when trying to identify which observations belong to each species. The fact that all of the data points are the same shape also makes it difficult to distinguish between them. Furthermore, many of the observations are obscured from view because the points are solidly filled and overlap with each other. This means that some of the data is hidden. In addition, the axes titles and labels are too small to read. Finally, units aren’t provided for the axes, so the reader just has to assume what these units are.
+
+\newpage
+
+## Question 3: Discuss how colour choice is important for communication in science figures and what considerations should be made (300-500 words).
+
+Colour is a key component of the information that is conveyed by scientific figures. For instance, colour can be used in heat maps to show how measurements such as temperature vary over different regions. Additionally, colour may be used in scatterplots to categorise observations into discrete groups, such as different species. Colour can even play an important role in diagnosing and monitoring disease, such as in 2D visualisations of coronary arteries to detect regions where lesions are likely to form (Borkin et al., 2011). Hence, colour can be used in different types of figures and visualisations to enhance the interpretation of data.
+
+Given the importance of colour for communicating scientific ideas, it may seem surprising that many researchers don’t use appropriate colour gradients when designing their figures (Crameri et al., 2020). For instance, many scientists choose a rainbow colour palette for their figures. One of the problems with using this palette is that it is non-uniform. This means that transitions between some colours are more dominant than transitions between others. A consequence of this is that the data can be misrepresented. For example, it may appear as though there is a sharper boundary between two parts of a colour map than there actually is. Distorting data in this way could have serious implications, such as when portraying danger zones relating to natural disaster risks. It's therefore recommended that scientists avoid using uneven colour gradients such as rainbow in their figures, so that the data can be interpreted more accurately.
+
+Another problem with using the rainbow colour palette is that it makes figures difficult to read for people with colour-vision deficiencies (CVDs) (Katsnelson, 2021). For instance, people with deuteranomaly find it difficult to distinguish between red and green. These colours are dominant when rainbow colour gradients are applied to figures, so colour maps using this palette tend to be unreadable to people with deuteranomaly. A key aspect of open science is ensuring that data is accessible to all groups of society, and therefore scientists should avoid using unsuitable colour palettes to allow people with CVDs to interpret their findings.
+
+Scientists can resolve these issues by choosing uniform colour palettes instead of non-uniform ones for their figures. Uniform colour palettes have been designed to ensure that variation in the data is represented accurately, rather than being distorted by certain colours. This ensures that readers can gain an intuitive understanding of the data, rather than being misled by colours that appear more pronounced. Furthermore, uniform colour palettes are more suitable for people with CVDs, making the data more accessible.
+
+Finally, as well as considering the uniformity of a figure’s colour gradient, scientists should aim for their figures to exhibit perceptual colour order. In other words, the reader should be able to infer the sequence of colours used to represent different levels of a variable without needing to refer to a colour bar. To achieve perceptual order, scientists should ensure that the lightness and brightness of their colour gradient increases linearly.
+
+\newpage
+
+## Question 4: Run a statistical test on the Palmer Penguins dataset and produce a figure to explain it.
+
+URL link to my Github repository: https://github.com/1352775/penguins 
+
+NB: the file containing my code for Question 4 only is called 'penguins_assignment.Rmd', while the file containing my answers to all questions is called '1053835_Reproducible_Science_in_R_assignment.Rmd'. 
+
+```{r Question 4 Cleaning data, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+#Setting working directory
+setwd("~/PenguinProjectAssignment")
+
+#Loading packages using libraries function
+source("functions/libraries.R")
+
+#Loading the raw data
+penguins_raw <- read.csv("data_raw/penguins_raw.csv")
+
+#Looking at the raw data
+head(penguins_raw)
+
+#Sourcing cleaning function to clean the raw data
+source("functions/cleaning.R")
+
+#Cleaning the raw data
+penguins_clean <- cleaning(penguins_raw)
+
+#Looking at the clean data
+head(penguins_clean)
+
+#Saving the clean data
+write.csv(penguins_clean, "data_clean/penguins_clean_2.csv")
+
+#Sourcing function for removing NAs from flipper length column
+source("functions/remove_NAs_from_flipper_length.R")
+
+#Removing NAs from flipper length column
+penguins_flipper_vs_body_mass <- remove_NAs_from_flipper_length(penguins_clean)
+
+#Viewing new data frame
+head(penguins_flipper_vs_body_mass)
+```
+
+```{r Question 4 Fitting linear model, echo = FALSE}
+#Fitting a linear model to analyse the relationship between body mass and flipper length
+LinearModel <- lm(flipper_length_mm ~ body_mass_g, penguins_flipper_vs_body_mass)
+
+#Carrying out an ANOVA test on the linear model
+anova(LinearModel)
+```
+
+```{r Question 4 Plotting figure, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+#Sourcing function for making a plot of the linear model
+source("functions/plot_flipper_vs_body_mass_figure.R")
+
+#Plotting figure
+LinearModelplot <- plot_flipper_vs_body_mass_figure(penguins_flipper_vs_body_mass)
+
+#Viewing figure
+LinearModelplot
+
+#Sourcing function for saving figure
+source("functions/save_plot_svg.R")
+
+#Saving figure
+save_plot_svg(penguins_flipper_vs_body_mass, 
+                      "figures/fig01_vector.svg", 
+                      size = 14, scaling = 0.93)
+```
+\newpage
+
+## Question 5: Download someone else's example from Question 4.
+URL link to my partner's Github repository: https://github.com/1056012/penguin_assignment
+
+**What elements of your partner's code helped you to understand their data pipeline?**
+
+My partner provided annotations to explain the steps carried out by each line of code. Furthermore, they outlined how the folders in the working directory should be organised. This helped me to run their code effectively as I knew which folders to save functions and figures to.    
+
+**Did you try to run it? Did it work?**
+
+Yes, I was able to run their code. However, I had to create and name my own folder to set as the working directory, as my partner did not provide a relative file path for the working directory.
+
+**What suggestions would you make for improving their code to make it more understandable or reproducible, and why?**
+
+One of the ways my partner could improve their code is by providing a relative file path in the “setwd()” function, rather than calling “file.choose()” within this function. This would make their work more reproducible, as it would mean that anyone else that wanted to run their code would use a folder with the same name for the working directory. 
+
+Additionally, my partner could have created functions for saving their plot as a png or svg file. This would make their work more reusable, as it is easier to save many plots as figures using a custom function rather than having to copy out the ‘agg_png()’ and ‘svglite()’ functions and specify their inputs every time. 
+
+Finally, my partner did not always use the ‘source()’ function to source their functions from the ‘functions’ folder. This meant that I had to run the pipeline for their functions before calling them instead, which is more complicated. Also, if I were to accidentally introduce a mistake into the pipeline for these functions, the code would no longer work properly. Sourcing the functions from the ‘functions’ folder would help to avoid this.
+
+**If you needed to alter your partner's figure using their code, do you think that would be easy or difficult, and why?**
+
+It wouldn’t be too difficult to alter my partner’s figure using their code, as they have provided a function for plotting their figure in their repository on Github. However, perhaps it would be easier to alter my partner’s figure if they provided a brief description of what each component of their plotting function did.
+
+**Reflect on your own code and figure from Question 4 with reference to your partner's work and also their review of yours. What improvements did they suggest, and do you agree?**
+
+My partner suggested that I could be more specific about the structure of my working directory, for instance by indicating that a folder called ‘functions’ should be created within the directory to save the files for the functions to. I agree with this suggestion, as it wasn't made clear in my code that this should be done. Additionally, my partner suggested that I could use annotations to be more explicit about where the csv files for my data were being saved to. I agree with this suggestion, as these annotations would improve the reproducibility of my code by providing users with a better idea of how the working directory should be organised and where the data can be accessed within it.
+
+**What did you learn about writing code for other people?**
+
+I learnt that a key part of writing code for other people is being organised. It is much easier for other people to run your code if they know exactly where to find and save the data, functions, and figures that are included in it.
+
+\newpage
+
+## Bibliography
+Baker, M. (2016) "1,500 scientists lift the lid on reproducibility". Nature. Available at: https://www.nature.com/articles/533452a (Accessed: 27 November 2022).
+
+Borkin, M. et al. (2011) "Evaluation of artery visualizations for heart disease diagnosis". IEEE Trans. Vis. Computer Graph. 17, 2479–2488.
+
+Crameri, F., Shephard, G. and Heron, P. (2020) "The misuse of colour in science communication", Nature Communications, 11(1). doi: 10.1038/s41467-020-19160-7.
+
+Katsnelson, A. (2021) "Colour me better: fixing figures for colour blindness", Nature.com. Available at: https://www.nature.com/articles/d41586-021-02696-z (Accessed: 28 November 2022).
+
+McKiernan, E. et al. (2016) "How open science helps researchers succeed", eLife, 5. doi: 10.7554/elife.16800.
+
+## Functions
+libraries
+```{r Libraries, eval = FALSE}
+library(palmerpenguins)
+library(ggplot2)
+library(tidyr)
+library(svglite)
+library(ragg)
+suppressPackageStartupMessages(library(janitor))
+suppressPackageStartupMessages(library(dplyr)) 
+```
+
+cleaning
+```{r Cleaning, eval = FALSE}
+cleaning <- function(data_raw){
+  data_raw %>%
+    clean_names() %>%
+    remove_empty(c("rows", "cols")) %>%
+    select(-starts_with("delta")) %>%
+    select(-comments) %>%
+  rename(bill_length_mm = culmen_length_mm, bill_depth_mm = culmen_depth_mm)
+}
+```
+
+remove_NAs_from_flipper_length
+```{r Remove NAs from flipper length, eval = FALSE}
+remove_NAs_from_flipper_length <- function(data_clean){
+  data_clean %>%
+    filter(!is.na(flipper_length_mm)) %>%
+    select(species, flipper_length_mm, body_mass_g)
+}
+```
+
+plot_flipper_vs_body_mass_figure
+```{r Plot flipper length vs body mass figure, eval = FALSE}
+plot_flipper_vs_body_mass_figure <- function(penguins_flipper_vs_body_mass){
+  penguins_flipper_vs_body_mass %>% 
+    ggplot(aes(x = body_mass_g, y = flipper_length_mm)) +
+    geom_point(aes(color = species), width = 0.3, show.legend = TRUE) +
+    scale_color_manual('Penguin Species', values = c("#E69F00","#56B4E9","#009E73")) +
+    geom_smooth(method = "lm", col = "#000000") +
+    labs(x = "Body mass (g)", y = "Flipper length (mm)") +
+    ggtitle("Relationship between Body Mass and Flipper Length") +
+    theme_bw()
+}
+```
+
+make_scatter_plot
+```{r Make scatter plot, eval = FALSE}
+make_scatter_plot <- function(penguins_clean){
+  penguins_clean %>% 
+    ggplot(aes(x = body_mass_g, y = flipper_length_mm)) +
+    geom_point(aes(color = species), width = 0.7, show.legend = TRUE) +
+    scale_color_manual(values = c("darkgreen","green","cyan4")) +
+    labs(x = "Body Mass",
+         y = "Flipper Length") +
+    xlim(1000,7000) +
+    ylim(100,300) +
+    theme(
+      axis.title.y = element_text(size = 7), 
+      axis.title.x = element_text(size = 7), 
+      axis.text = element_text(size = 7))
+}
+```
+
+save_plot_svg
+```{r Save plot as svg file, eval = FALSE}
+save_plot_svg <- function(penguins_flipper_vs_body_mass, 
+                          filename, size, scaling){
+  size_inches = size/2.54
+  svglite(filename, width   = size_inches, 
+          height  = size_inches, 
+          scaling = scaling)
+  penguins_flipper_vs_body_mass <- plot_flipper_vs_body_mass_figure(penguins_flipper_vs_body_mass)
+  print(penguins_flipper_vs_body_mass)
+  dev.off()
+}
+```
+
