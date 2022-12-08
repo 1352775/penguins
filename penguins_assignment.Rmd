@@ -4,7 +4,6 @@ candidate ID: '1053835'
 date: "2022-12-04"
 output:
   pdf_document: default
-  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -37,14 +36,11 @@ head(penguins_clean)
 #Saving the clean data
 write.csv(penguins_clean, "data_clean/penguins_clean_2.csv")
 
-#Reading in the clean data
-penguins_now_clean <- read.csv("data_clean/penguins_clean_2.csv")
-
 #Sourcing function for removing NAs from flipper length column
 source("functions/remove_NAs_from_flipper_length.R")
 
 #Removing NAs from flipper length column
-penguins_flipper_vs_body_mass <- remove_NAs_from_flipper_length(penguins_now_clean)
+penguins_flipper_vs_body_mass <- remove_NAs_from_flipper_length(penguins_clean)
 
 #Viewing new data frame
 head(penguins_flipper_vs_body_mass)
@@ -126,8 +122,8 @@ plot_flipper_vs_body_mass_figure <- function(penguins_flipper_vs_body_mass){
 
 make_scatter_plot
 ```{r Make scatter plot, eval = FALSE}
-make_scatter_plot <- function(penguins_now_clean){
-  penguins_now_clean %>% 
+make_scatter_plot <- function(penguins_clean){
+  penguins_clean %>% 
     ggplot(aes(x = body_mass_g, y = flipper_length_mm)) +
     geom_point(aes(color = species), width = 0.7, show.legend = TRUE) +
     scale_color_manual(values = c("darkgreen","green","cyan4")) +
