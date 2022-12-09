@@ -2,9 +2,9 @@
 title: "1053835 'Reproducible Science in R and making Figures' assignment"
 candidate ID: '1053835'
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -135,7 +135,7 @@ penguins_flipper_vs_body_mass <- remove_NAs_from_flipper_length(penguins_clean)
 #Viewing new data frame
 head(penguins_flipper_vs_body_mass)
 ```
-
+**Results of ANOVA test on linear model analysing the relationship between body mass and flipper length:**
 ```{r Question 4 Fitting linear model, echo = FALSE}
 #Fitting a linear model to analyse the relationship between body mass and flipper length
 LinearModel <- lm(flipper_length_mm ~ body_mass_g, penguins_flipper_vs_body_mass)
